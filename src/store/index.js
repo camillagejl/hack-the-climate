@@ -38,10 +38,31 @@ export default new Vuex.Store({
     },
     mutations: {
         addItem(state, payload) {
+
             console.log(payload);
-            state.expenseItems[payload.product] = {unitPrice: payload.unitPrice};
+
+            let itemExists = false;
+
+            state.expenseItems.forEach(product => {
+                if (product.product === payload.product) {
+                    itemExists = true;
+
+                    for (const [key, value] of Object.entries(product.unitPrices)) {
+                        if (key === payload.unitPrice) {
+                            console.log("Yes yes!");
+                            Vue.set(state.expenseItems[payload.product].unitPrices, key, state.expenseItems[payload.product].unitPrices[key]++);
+                            return;
+                        }
+                    }
+                }
+            })
+
+            if (!itemExists) {
+                Vue.set(state.expenseItems[payload.product], 'unitPrices', {[payload.unitPrice]: 1})
+            }
         }
     },
-    actions: {},
+    actions: {}
+    ,
     modules: {}
 })
